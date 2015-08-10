@@ -1,0 +1,12 @@
+
+
+subprojects {
+   repositories {
+      mavenCentral()
+      mavenLocal()
+   }
+}
+
+task wrapper(type: Wrapper) {
+   gradleVersion = '2.6'
+}
