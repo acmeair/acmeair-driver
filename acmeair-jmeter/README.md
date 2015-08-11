@@ -22,6 +22,11 @@ cd acmeair-driver
 ./gradlew build
 ```
 
+for Windows:
+```text
+gradlew.bat build
+```
+
 copy the jar to  jmeter's ext directory
 ```text
 cp acmeair-jmeter/build/libs/acmeair-jmeter-*-SNAPSHOT.jar  %JMETER_DIR%/lib/ext/
