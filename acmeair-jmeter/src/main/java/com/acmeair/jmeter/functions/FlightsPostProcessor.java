@@ -127,9 +127,8 @@ public class FlightsPostProcessor extends AbstractTestElement implements PostPro
 							context.setTOSEGMENTID(fsId);
 						}
 						else {
-							JSONObject flightOption0Pkey = (JSONObject) flightOption0.get("pkey");
-							context.setTOFLIGHT((String) flightOption0Pkey.get("id"));
-							context.setTOSEGMENTID((String) flightOption0Pkey.get("flightSegmentId"));
+							String id = (String)flightOption0.get("id");
+							context.setTOFLIGHT(id);
 						}
 					} else if (counter == 2) {
 						JSONObject flightOption0 = (JSONObject) jsonFlightOptions.get(tripCounter - 1);
@@ -140,9 +139,8 @@ public class FlightsPostProcessor extends AbstractTestElement implements PostPro
 							context.setRESEGMENTID(fsId);
 						}
 						else {
-							JSONObject flightOption0Pkey = (JSONObject) flightOption0.get("pkey");
-							context.setRETFLIGHT((String) flightOption0Pkey.get("id"));
-							context.setRESEGMENTID((String) flightOption0Pkey.get("flightSegmentId"));
+							String id = (String)flightOption0.get("id");
+							context.setRETFLIGHT(id);
 						}
 					}
 				}
