@@ -42,8 +42,9 @@ Also needed is the json-simple library to jmeter's ext directory.
 ```text
 cd acmeair-jmeter/scripts/
 ```
-Edit the host.csv file to be the appropriate name or address for the WebSphere Liberty server.
-The workload can be started using either the command line or JMeter's graphical interface.  
+To specify the address of the server, specify `-JHOSTNAME=<hostname> -JPORT=<port>` on the JMeter command line to match the address of your WebSphere Liberty server. Alternatively, edit the `user.properties` file, changing `HOSTNAME` and `PORT`, and supply this file to JMeter with `-q user.properties`.
+
+The workload can be executed using either the command line or JMeter's graphical interface.  
 
 To run the workload using the command line, some additional steps are needed to configure what will be collected in the output. Edit the %JMETER_DIR%/bin/jmeter.properties file setting the summariser properties to get basic output reporting.
 
@@ -57,7 +58,7 @@ summariser.name=summary
 summariser.interval=30
 summariser.log=true
 ```
-Setting these properties will allow summary statistics to be printed on the console screen, as well as in the specified log file. 
+Setting these properties will allow summary statistics to be printed on the console screen, as well as in the specified log file. Alternatively, use the provided `user.properties` file which already enables the summarizer.
 
 In addition to the data collected to the log file. JMeter can also collect the sampler result data of individual requests. What data is collected in this JTL file is fully configurable within the jmeter.properties file, and a basic set of data collection is enabled in JMeter by default. Adding too many metrics to be collected can add additional overhead to the workload process.  
 
@@ -66,7 +67,7 @@ The default format of the JTL file output is csv. if desired, this can be switch
 jmeter.save.saveservice.output_format=xml
 ```
 
-In addition to the standard metrics that are available within JMeter, the AcmeAir.jmx test plan also has some additional metrics available.  These custom metrics can be printed in the JTL output file by adding the sample_variables property to the %JMETER_DIR%/bin/user.properties file. 
+In addition to the standard metrics that are available within JMeter, the AcmeAir.jmx test plan also has some additional metrics available.  These custom metrics can be printed in the JTL output file by adding the sample_variables property to the %JMETER_DIR%/bin/user.properties file. This is already present in the provided `user.properties` file.
 ```text
 sample_variables=FLIGHTTOCOUNT,FLIGHTRETCOUNT,ONEWAY
 ```
@@ -107,70 +108,28 @@ Alternatively, the workload can also be ran from the command line if desired.
 
 The most common syntax for running the workload from the command line would be:
 ```text
-%JMETER_DIR%/bin/jmeter -n -t AcmeAir.jmx -j AcmeAir1.log -l AcmeAir1.jtl
+%JMETER_DIR%/bin/jmeter -n -t AcmeAir.jmx -j AcmeAir1.log -l AcmeAir1.jtl -q user.properties
 ```
 * **-n** This specifies JMeter is to run in non-gui mode 
 * **-t** The name of the JMeter test plan. 
 * **-j** The name of the output log file. 
 * **-l** The name of the output file to collect JMeter sampler results. 
-
+* **-q** The name of the JMeter user.properties file.
 
 ## Instructions to run the workload for the NodeJS implementation
 
 In order to run the JMeter workload script with the NodeJS implementation of Acme Air, there are a couple of minor changes necessary.  
 
-*1*.) Change the CONTEXT_ROOT  user defined variable from /acmeair-webapp  to an empty value. 
+*1*.) Change the CONTEXT_ROOT  user defined variable from /acmeair-webapp  to an empty value either by passing `-JCONTEXT_ROOT=` on the command line, or in `user.properties`:
 
 ```text
-       <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-          <collectionProp name="Arguments.arguments">
-            <elementProp name="CONTEXT_ROOT" elementType="Argument">
-              <stringProp name="Argument.name">CONTEXT_ROOT</stringProp>
-              <stringProp name="Argument.value">/acmeair-webapp</stringProp>
-              <stringProp name="Argument.desc">prepended to all http urls</stringProp>
-              <stringProp name="Argument.metadata">=</stringProp>
-            </elementProp>
-          </collectionProp>
-        </Arguments>
-```
-In the above stanza *Argument.value* should be changed to: 
-
-```text
- <stringProp name="Argument.value"></stringProp>
+CONTEXT_ROOT=
 ```
 
-
-
-*2*.) Change the port from 9080 to 3000 
-
-```text
-        <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults" enabled="true">
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-            <collectionProp name="Arguments.arguments"/>
-          </elementProp>
-          <stringProp name="HTTPSampler.domain">${WLP_HOSTS}</stringProp>
-          <stringProp name="HTTPSampler.port">9080</stringProp>
-          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
-          <stringProp name="HTTPSampler.response_timeout"></stringProp>
-          <stringProp name="HTTPSampler.protocol"></stringProp>
-          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">/acmeair-webapp</stringProp>
-          <stringProp name="HTTPSampler.concurrentPool">4</stringProp>
-        </ConfigTestElement>
-        <hashTree/>
-```
-The HTTPSampler.port property should be changed to be 3000 (or whichever port the target server is listening on).
-
-```text
-<stringProp name="HTTPSampler.port">3000</stringProp>
-```
-
-
-*3*.) When running the jmeter command add a Java systems property to the command line: 
+*2*.) When running the jmeter command, either add a Java systems property to the command line: 
 
 ```text
 %JMETER_DIR%/bin/jmeter -DusePureIDs=true -n -t AcmeAir.jmx -j AcmeAir1.log -l AcmeAir1.jtl
 ```
 
-
-
+Or use the provided system.properties file by specifying `-S system.properties` on the JMeter command line.
