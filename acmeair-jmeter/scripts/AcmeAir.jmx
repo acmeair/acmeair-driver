@@ -60,7 +60,7 @@
           <collectionProp name="Arguments.arguments">
             <elementProp name="CONTEXT_ROOT" elementType="Argument">
               <stringProp name="Argument.name">CONTEXT_ROOT</stringProp>
-              <stringProp name="Argument.value">${__P(CONTEXT_ROOT)}</stringProp>
+              <stringProp name="Argument.value">${__P(CONTEXT_ROOT, /acmeair-webapp)}</stringProp>
               <stringProp name="Argument.desc">prepended to all http urls</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
