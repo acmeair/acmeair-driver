@@ -113,17 +113,47 @@ The most common syntax for running the workload from the command line would be:
 * **-t** The name of the JMeter test plan. 
 * **-j** The name of the output log file. 
 * **-l** The name of the output file to collect JMeter sampler results. 
-
-These Java System Properties can be added to overwrite default values:
-
-```text
-%JMETER_DIR%/bin/jmeter -n -t AcmeAir-microservices.jmx -DusePureIDs=true -JHOST=${HOST} -JPORT=${PORT} -j jMeter-logName -JTHREAD=100 -JUSER=999 -JDURATION=${DURATION} -JRAMP=0 -JDELAY=0
+ ## Instructions to run the workload for the NodeJS implementation
+ In order to run the JMeter workload script with the NodeJS implementation of Acme Air, there are a couple of minor changes necessary.  
+ *1*.) Change the CONTEXT_ROOT  user defined variable from /acmeair-webapp  to an empty value. 
+ ```text
+       <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+          <collectionProp name="Arguments.arguments">
+            <elementProp name="CONTEXT_ROOT" elementType="Argument">
+              <stringProp name="Argument.name">CONTEXT_ROOT</stringProp>
+              <stringProp name="Argument.value">/acmeair-webapp</stringProp>
+              <stringProp name="Argument.desc">prepended to all http urls</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+          </collectionProp>
+        </Arguments>
 ```
-
-* **-JHOST** The host name of the Acmeair LB (e.g. ingress URL.  All services must be accessed using single hostname)
-* **-JPORT** The port number to access Acmeair services
-* **-JTHREAD** jMeter thread number
-* **-JUSER** Total Acmeair user number to be used for testing (if 1000 users are setup, use 999 : 0 - 999 users, total 1000)
-* **-JDURATION** Duration of the test run (seconds)
-* **-JRAMP** Ramp time (seconds)
-* **-JDELAY** Delay in starting the test (seconds)
+In the above stanza *Argument.value* should be changed to: 
+ ```text
+ <stringProp name="Argument.value"></stringProp>
+```
+ *2*.) Change the port from 9080 to 3000 
+ ```text
+        <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">${WLP_HOSTS}</stringProp>
+          <stringProp name="HTTPSampler.port">9080</stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/acmeair-webapp</stringProp>
+          <stringProp name="HTTPSampler.concurrentPool">4</stringProp>
+        </ConfigTestElement>
+        <hashTree/>
+```
+The HTTPSampler.port property should be changed to be 3000 (or whichever port the target server is listening on).
+ ```text
+<stringProp name="HTTPSampler.port">3000</stringProp>
+```
+ *3*.) When running the jmeter command add a Java systems property to the command line: 
+ ```text
+%JMETER_DIR%/bin/jmeter -DusePureIDs=true -n -t AcmeAir.jmx -j AcmeAir1.log -l AcmeAir1.jtl
+```
